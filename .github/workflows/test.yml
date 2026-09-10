@@ -4,6 +4,7 @@ on: [push, pull_request]
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   test:
@@ -19,5 +20,36 @@ jobs:
         with:
           luaVersion: luajit-2.1
       - uses: leafo/gh-actions-luarocks@v6
+      - name: Install test dependencies
+        run: luarocks --lua-version=5.1 --tree=lua_modules test --prepare
       - name: Run tests
-        run: luarocks --lua-version=5.1 --tree=lua_modules test
+        run: |
+          mkdir -p reports
+          ./lua_modules/bin/busted -o junit -Xoutput reports/tests.xml
+      - name: Test summary
+        if: always()
+        run: python3 tools/report.py tests reports/tests.xml >> "$GITHUB_STEP_SUMMARY"
+      - name: Run benchmarks
+        run: luajit benchmarks/run.lua > reports/benchmarks.json
+      - name: Fetch previous benchmark results
+        if: github.event_name == 'push'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          run_id=$(gh run list --workflow .github/workflows/test.yml --branch "$GITHUB_REF_NAME" \
+            --status completed --limit 30 --json databaseId,headSha \
+            --jq ".[] | select(.headSha != \"$GITHUB_SHA\") | .databaseId" | head -n 1)
+          if [ -n "$run_id" ]; then
+            gh run download "$run_id" --name test-and-benchmark-reports --dir baseline
+          fi
+      - name: Benchmark summary
+        if: always()
+        run: python3 tools/report.py benchmarks reports/benchmarks.json --baseline baseline/benchmarks.json >> "$GITHUB_STEP_SUMMARY"
+      - name: Save reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-and-benchmark-reports
+          path: reports/
+          if-no-files-found: ignore
