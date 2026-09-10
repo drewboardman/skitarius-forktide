@@ -1,12 +1,12 @@
 -- Written by Norkkom aka "SanctionedPsyker"
-local mod = get_mod("Skitarius")
-mod.charge_release = mod:io_dofile("Skitarius/scripts/mods/Skitarius/modules/SkitariusChargeRelease")
-local Engram = mod:io_dofile("Skitarius/scripts/mods/Skitarius/modules/SkitariusEngram")
-local Armoury = mod:io_dofile("Skitarius/scripts/mods/Skitarius/modules/SkitariusArmoury")
-local Omnissiah = mod:io_dofile("Skitarius/scripts/mods/Skitarius/modules/SkitariusOmnissiah")
-local BindManager = mod:io_dofile("Skitarius/scripts/mods/Skitarius/modules/SkitariusBindManager")
-local WeaponManager = mod:io_dofile("Skitarius/scripts/mods/Skitarius/modules/SkitariusWeaponManager")
-local WidgetManager = mod:io_dofile("Skitarius/scripts/mods/Skitarius/modules/SkitariusWidgetManager")
+local mod = get_mod("Forktide")
+mod.charge_release = mod:io_dofile("Forktide/scripts/mods/Forktide/modules/ForktideChargeRelease")
+local Engram = mod:io_dofile("Forktide/scripts/mods/Forktide/modules/ForktideEngram")
+local Armoury = mod:io_dofile("Forktide/scripts/mods/Forktide/modules/ForktideArmoury")
+local Omnissiah = mod:io_dofile("Forktide/scripts/mods/Forktide/modules/ForktideOmnissiah")
+local BindManager = mod:io_dofile("Forktide/scripts/mods/Forktide/modules/ForktideBindManager")
+local WeaponManager = mod:io_dofile("Forktide/scripts/mods/Forktide/modules/ForktideWeaponManager")
+local WidgetManager = mod:io_dofile("Forktide/scripts/mods/Forktide/modules/ForktideWidgetManager")
 -- Done early to ensure HUD injection
 mod.widget_manager = WidgetManager:new(mod)
 

@@ -57,7 +57,7 @@ local function fixture(mode, global_threshold, weapon_threshold)
         },
     }, { __index = _G })
     local function load_module(name)
-        local chunk = assert(loadfile("scripts/mods/Skitarius/modules/" .. name .. ".lua"))
+        local chunk = assert(loadfile("scripts/mods/Forktide/modules/" .. name .. ".lua"))
         setfenv(chunk, env)
         return chunk()
     end
@@ -66,15 +66,15 @@ local function fixture(mode, global_threshold, weapon_threshold)
     end
     local mod = {
         settings = { always_charge = true, always_charge_threshold = global_threshold },
-        armoury = load_module("SkitariusArmoury"),
-        charge_release = load_module("SkitariusChargeRelease"),
+        armoury = load_module("ForktideArmoury"),
+        charge_release = load_module("ForktideChargeRelease"),
     }
     mod.ready = function() return true end
     mod.kill_sequence = function() end
-    local engram = instance(load_module("SkitariusEngram"))
-    local weapon = instance(load_module("SkitariusWeaponManager"))
-    local binds = instance(load_module("SkitariusBindManager"))
-    local omnissiah = instance(load_module("SkitariusOmnissiah"))
+    local engram = instance(load_module("ForktideEngram"))
+    local weapon = instance(load_module("ForktideWeaponManager"))
+    local binds = instance(load_module("ForktideBindManager"))
+    local omnissiah = instance(load_module("ForktideOmnissiah"))
     mod.engram, mod.weapon_manager = engram, weapon
     engram:init(mod)
     weapon:init(mod)
@@ -95,19 +95,19 @@ local function fixture(mode, global_threshold, weapon_threshold)
     omnissiah:set_bind_manager(binds)
     -- Real HUD element driven by the real widget manager, so HUD benchmarks
     -- include the actual string concatenation and color-table allocations.
-    hud = instance(load_module("HudElementSkitarius"))
+    hud = instance(load_module("HudElementForktide"))
     hud._widgets_by_name = {
-        skitarius = {
+        forktide = {
             style = { icon = { size = { 50, 50 }, visible = false, color = { 255, 255, 255, 255 } } },
             content = { icon = "content/ui/materials/icons/circumstances/maelstrom_01" },
         },
     }
     hud_handle = {
         element = function(_, name)
-            if name == "HudElementSkitarius" then return hud end
+            if name == "HudElementForktide" then return hud end
         end,
     }
-    local widget = instance(load_module("SkitariusWidgetManager"))
+    local widget = instance(load_module("ForktideWidgetManager"))
     widget.mod = mod
     widget.bind_manager = binds
     widget.type = "color"

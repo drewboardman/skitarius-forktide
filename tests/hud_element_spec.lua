@@ -3,7 +3,7 @@ local fixture = require("tests.support.charge_release_fixture")
 describe("hud element", function()
     it("does not rebuild the colour table when the colour is unchanged", function()
         local f = fixture("none", 100, 50)
-        local style = f.hud._widgets_by_name.skitarius.style.icon
+        local style = f.hud._widgets_by_name.forktide.style.icon
 
         f.hud:set_color(255, 255, 255, 255)
         local first = style.color
@@ -13,7 +13,7 @@ describe("hud element", function()
 
     it("replaces the colour table when the colour changes", function()
         local f = fixture("none", 100, 50)
-        local style = f.hud._widgets_by_name.skitarius.style.icon
+        local style = f.hud._widgets_by_name.forktide.style.icon
 
         f.hud:set_color(255, 255, 255, 255)
         local first = style.color
@@ -24,7 +24,7 @@ describe("hud element", function()
 
     it("resolves the precomputed path for a known icon", function()
         local f = fixture("none", 100, 50)
-        local content = f.hud._widgets_by_name.skitarius.content
+        local content = f.hud._widgets_by_name.forktide.content
 
         f.hud:set_icon("circumstances/special_waves_01")
         assert.are.equal("content/ui/materials/icons/circumstances/special_waves_01", content.icon)
@@ -32,7 +32,7 @@ describe("hud element", function()
 
     it("falls back to building a path for an unknown icon", function()
         local f = fixture("none", 100, 50)
-        local content = f.hud._widgets_by_name.skitarius.content
+        local content = f.hud._widgets_by_name.forktide.content
 
         f.hud:set_icon("circumstances/custom_icon")
         assert.are.equal("content/ui/materials/icons/circumstances/custom_icon", content.icon)
@@ -40,7 +40,7 @@ describe("hud element", function()
 
     it("applies visibility only when it changes", function()
         local f = fixture("none", 100, 50)
-        local style = f.hud._widgets_by_name.skitarius.style.icon
+        local style = f.hud._widgets_by_name.forktide.style.icon
 
         f.hud:set_visible(false)
         assert.is_false(style.visible)

@@ -1,4 +1,4 @@
-local SkitariusArmoury = class("SkitariusArmoury")
+local ForktideArmoury = class("ForktideArmoury")
 
 local ALT_WEAPONS = {
     lasgun_p2_m1 = true,
@@ -235,18 +235,18 @@ local INCORRECT_TIMES = {
     --]]
 }
 
-SkitariusArmoury.shoot_actions = SHOOT_ACTIONS
-SkitariusArmoury.alt_weapons = ALT_WEAPONS
-SkitariusArmoury.special_attack = SPECIAL_ATTACK
-SkitariusArmoury.charged_ranged = CHARGED_RANGED
-SkitariusArmoury.active_special_ranged = ACTIVE_SPECIAL_RANGED
-SkitariusArmoury.combat_shotgun = COMBAT_SHOTGUN
-SkitariusArmoury.force_staff = FORCE_STAFF
-SkitariusArmoury.quelling = QUELLING
-SkitariusArmoury.astronomican = ASTRONOMICAN
-SkitariusArmoury.incorrect_times = INCORRECT_TIMES
+ForktideArmoury.shoot_actions = SHOOT_ACTIONS
+ForktideArmoury.alt_weapons = ALT_WEAPONS
+ForktideArmoury.special_attack = SPECIAL_ATTACK
+ForktideArmoury.charged_ranged = CHARGED_RANGED
+ForktideArmoury.active_special_ranged = ACTIVE_SPECIAL_RANGED
+ForktideArmoury.combat_shotgun = COMBAT_SHOTGUN
+ForktideArmoury.force_staff = FORCE_STAFF
+ForktideArmoury.quelling = QUELLING
+ForktideArmoury.astronomican = ASTRONOMICAN
+ForktideArmoury.incorrect_times = INCORRECT_TIMES
 
-SkitariusArmoury.validate_chain_time = function(self, chain_time, chain_action_name, weapon_name)
+ForktideArmoury.validate_chain_time = function(self, chain_time, chain_action_name, weapon_name)
     if not (INCORRECT_TIMES[weapon_name] and INCORRECT_TIMES[weapon_name][chain_action_name]) then
         return chain_time
     end
@@ -273,7 +273,7 @@ SkitariusArmoury.validate_chain_time = function(self, chain_time, chain_action_n
     return chain_time
 end
 
-SkitariusArmoury.generates_peril = function(self, input, scriers)
+ForktideArmoury.generates_peril = function(self, input, scriers)
     if not input then
         input = "action_one_hold"
     end
@@ -331,4 +331,4 @@ SkitariusArmoury.generates_peril = function(self, input, scriers)
     return false, nil
 end
 
-return SkitariusArmoury
+return ForktideArmoury

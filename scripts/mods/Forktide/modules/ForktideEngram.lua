@@ -1,4 +1,4 @@
-local SkitariusEngram = class("SkitariusEngram")
+local ForktideEngram = class("ForktideEngram")
 
 local SHOTPISTOL_SHIELD_WEAPON_NAME = "shotpistol_shield_p1_m1"
 
@@ -75,21 +75,21 @@ local function _resolve_ranged_fire_mode(armoury, weapon_name, fire_mode)
     return fire_mode
 end
 
--- Initializes the engram state for the SkitariusEngram object
-SkitariusEngram.init = function(self, mod)
+-- Initializes the engram state for the ForktideEngram object
+ForktideEngram.init = function(self, mod)
     self.mod = mod
     self.armoury = mod.armoury
 end
 
-SkitariusEngram.set_weapon_manager = function(self, weapon_manager)
+ForktideEngram.set_weapon_manager = function(self, weapon_manager)
     self.weapon_manager = weapon_manager
 end
 
-SkitariusEngram.set_bind_manager = function(self, bind_manager)
+ForktideEngram.set_bind_manager = function(self, bind_manager)
     self.bind_manager = bind_manager
 end
 
-SkitariusEngram.new_engram = function(self, bind_name_or_temp_data, temp_or_nil)
+ForktideEngram.new_engram = function(self, bind_name_or_temp_data, temp_or_nil)
     local weapon_manager = self.weapon_manager
     local armoury = self.armoury
     local weapon_type = weapon_manager:weapon_type()
@@ -208,7 +208,7 @@ SkitariusEngram.new_engram = function(self, bind_name_or_temp_data, temp_or_nil)
 end
 
 -- Returns the current engram data for the specified bind alongside the bind name if it is valid, otherwise nil
-SkitariusEngram.valid_engram = function(self, bind, temp_or_nil)
+ForktideEngram.valid_engram = function(self, bind, temp_or_nil)
     if not bind then
         return nil, nil
     end
@@ -262,7 +262,7 @@ SkitariusEngram.valid_engram = function(self, bind, temp_or_nil)
     return engram_data, engram_name
 end
 
-SkitariusEngram.current_command = function(self)
+ForktideEngram.current_command = function(self)
     if not self.COMMANDS or not self.INDEX then
         return nil
     end
@@ -271,7 +271,7 @@ SkitariusEngram.current_command = function(self)
 end
 
 -- Generate a temporary engram sequence and apply it as the current engram
-SkitariusEngram.build_temp_engram = function(self, action, optional_origin)
+ForktideEngram.build_temp_engram = function(self, action, optional_origin)
     if self.TYPE == action or self.BIND == "TEMP" or self.BIND == "INTERRUPT" or self.COMMANDS[self.INDEX] and string.find(self.COMMANDS[self.INDEX], "wield") then
         return
     end
@@ -305,7 +305,7 @@ SkitariusEngram.build_temp_engram = function(self, action, optional_origin)
 end
 
 -- Move engram to the next index, or reset if it has reached its conclusion
-SkitariusEngram.iterate_engram = function(self)
+ForktideEngram.iterate_engram = function(self)
     if self.INDEX + 1 > #self.COMMANDS then
         if self.TEMP then
             self.TEMP = false
@@ -331,7 +331,7 @@ SkitariusEngram.iterate_engram = function(self)
 end
 
 -- Returns the next command after self.INDEX, or further based on the optional addition parameter
-SkitariusEngram.next_engram_action = function(self, optional_addition)
+ForktideEngram.next_engram_action = function(self, optional_addition)
     local extra = type(optional_addition) == "number" and optional_addition + 1 or 1
 
     if self.INDEX + extra > #self.COMMANDS then
@@ -345,12 +345,12 @@ SkitariusEngram.next_engram_action = function(self, optional_addition)
 end
 
 -- Reset the engram sequence to the first action
-SkitariusEngram.reset_engram = function(self)
+ForktideEngram.reset_engram = function(self)
     self.INDEX = 1
 end
 
 -- Reset engram to empty state, clearing all data
-SkitariusEngram.kill_engram = function(self)
+ForktideEngram.kill_engram = function(self)
     self.INDEX = 1
     self.TEMP = false
     self.TYPE = "none"
@@ -360,7 +360,7 @@ SkitariusEngram.kill_engram = function(self)
     self.COMMANDS = {}
 end
 
-SkitariusEngram.heavy_buff = function(self)
+ForktideEngram.heavy_buff = function(self)
     if not self.SETTINGS or not self.SETTINGS.HEAVY_BUFF or self.SETTINGS.HEAVY_BUFF == "none" then
         return
     end
@@ -368,7 +368,7 @@ SkitariusEngram.heavy_buff = function(self)
     return self.SETTINGS.HEAVY_BUFF
 end
 
-SkitariusEngram.heavy_buff_stacks = function(self)
+ForktideEngram.heavy_buff_stacks = function(self)
     if not self.SETTINGS or not self.SETTINGS.HEAVY_BUFF_STACKS or self.SETTINGS.HEAVY_BUFF_STACKS < 1 then
         return 0
     end
@@ -376,7 +376,7 @@ SkitariusEngram.heavy_buff_stacks = function(self)
     return self.SETTINGS.HEAVY_BUFF_STACKS
 end
 
-SkitariusEngram.heavy_buff_special = function(self)
+ForktideEngram.heavy_buff_special = function(self)
     if not self.SETTINGS or not self.SETTINGS.HEAVY_BUFF_SPECIAL then
         return false
     end
@@ -384,7 +384,7 @@ SkitariusEngram.heavy_buff_special = function(self)
     return self.SETTINGS.HEAVY_BUFF_SPECIAL
 end
 
-SkitariusEngram.heavy_buff_special_stacks = function(self)
+ForktideEngram.heavy_buff_special_stacks = function(self)
     if not self.SETTINGS or not self.SETTINGS.SPECIAL_BUFF_STACKS or self.SETTINGS.SPECIAL_BUFF_STACKS < 1 then
         return 0
     end
@@ -392,7 +392,7 @@ SkitariusEngram.heavy_buff_special_stacks = function(self)
     return self.SETTINGS.SPECIAL_BUFF_STACKS
 end
 
-SkitariusEngram.charge_threshold = function(self)
+ForktideEngram.charge_threshold = function(self)
     if not self.SETTINGS or not self.SETTINGS.CHARGE_THRESHOLD or self.SETTINGS.CHARGE_THRESHOLD < 0 then
         return nil
     end
@@ -400,7 +400,7 @@ SkitariusEngram.charge_threshold = function(self)
     return self.SETTINGS.CHARGE_THRESHOLD
 end
 
-SkitariusEngram.get_setting = function(self, setting_name)
+ForktideEngram.get_setting = function(self, setting_name)
     if not self.SETTINGS or not self.SETTINGS[setting_name] then
         return nil
     end
@@ -408,4 +408,4 @@ SkitariusEngram.get_setting = function(self, setting_name)
     return self.SETTINGS[setting_name]
 end
 
-return SkitariusEngram
+return ForktideEngram

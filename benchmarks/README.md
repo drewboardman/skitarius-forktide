@@ -1,8 +1,8 @@
 # Benchmarks
 
 `run.lua` measures the CPU and allocation cost of the mod's hot paths without
-launching Darktide. It drives the real `SkitariusOmnissiah`,
-`SkitariusWeaponManager`, `SkitariusWidgetManager` and `HudElementSkitarius`
+launching Darktide. It drives the real `ForktideOmnissiah`,
+`ForktideWeaponManager`, `ForktideWidgetManager` and `HudElementForktide`
 methods through the same fixture the tests use
 (`tests/support/charge_release_fixture.lua`), so the numbers track changes to
 shipping code instead of to a rewrite of it.

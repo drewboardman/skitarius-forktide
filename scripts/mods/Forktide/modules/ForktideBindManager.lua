@@ -1,4 +1,4 @@
-local SkitariusBindManager = class("SkitariusBindManager")
+local ForktideBindManager = class("ForktideBindManager")
 
 -- ACTIVE_BINDS: Tracks the state of each bind
 local ACTIVE_BINDS = {
@@ -106,7 +106,7 @@ local SETTINGS = {
     reset_all_ranged = true,
 }
 
-SkitariusBindManager.init = function(self, mod, engram, weapon_manager)
+ForktideBindManager.init = function(self, mod, engram, weapon_manager)
     self.mod = mod
     self.active_binds = ACTIVE_BINDS
     self.monitored_actions = MONITORED_ACTIONS
@@ -147,14 +147,14 @@ end
 --  ╚═╗║╣  ║  ║ ║║║║║ ╦╚═╗
 --  ╚═╝╚═╝ ╩  ╩ ╩╝╚╝╚═╝╚═╝
 
-SkitariusBindManager.bind_setting = function(self, setting_name)
+ForktideBindManager.bind_setting = function(self, setting_name)
     local preliminary = SETTINGS[setting_name]
     if preliminary or self:valid_melee_setting(setting_name) or self:valid_ranged_setting(setting_name) then
         return true
     end
 end
 
-SkitariusBindManager.set_bind_setting = function(self, setting_name)
+ForktideBindManager.set_bind_setting = function(self, setting_name)
     local mod = self.mod
     local weapon_manager = self.weapon_manager
     -- Reset Melee Weapon
@@ -203,11 +203,11 @@ end
 --  │││├┤ │  ├┤ ├┤ 
 --  ┴ ┴└─┘┴─┘└─┘└─┘
 
-SkitariusBindManager.valid_melee_setting = function(self, setting_name)
+ForktideBindManager.valid_melee_setting = function(self, setting_name)
     return MELEE_TEMPLATE[setting_name] ~= nil
 end
 
-SkitariusBindManager.set_melee_setting = function(self, setting_name)
+ForktideBindManager.set_melee_setting = function(self, setting_name)
     local mod = self.mod
     local temp_bind = mod:get("keybind_selection_melee")
     local temp_weapon = mod:get("melee_weapon_selection")
@@ -219,7 +219,7 @@ SkitariusBindManager.set_melee_setting = function(self, setting_name)
     mod:set("bind_data", self.bind_data, false)
 end
 
-SkitariusBindManager.reset_melee_binds = function(self)
+ForktideBindManager.reset_melee_binds = function(self)
     local mod = self.mod
     local temp_weapon = mod:get("melee_weapon_selection")
     mod:set("keybind_selection_melee", "override_primary", false)
@@ -235,7 +235,7 @@ SkitariusBindManager.reset_melee_binds = function(self)
     mod:set("reset_weapon_melee", false, false)
 end
 
-SkitariusBindManager.reset_all_melee_binds = function(self)
+ForktideBindManager.reset_all_melee_binds = function(self)
     local mod = self.mod
     for key, _ in pairs(self.bind_data) do
         self.bind_data[key].MELEE = {
@@ -251,7 +251,7 @@ SkitariusBindManager.reset_all_melee_binds = function(self)
     mod:set("reset_all_melee", false, false)
 end
 
-SkitariusBindManager.set_melee_weapon_or_keybind = function(self)
+ForktideBindManager.set_melee_weapon_or_keybind = function(self)
     local mod = self.mod
     local temp_weapon = mod:get("melee_weapon_selection")
     local temp_bind = mod:get("keybind_selection_melee")
@@ -268,11 +268,11 @@ end
 --  ├┬┘├─┤││││ ┬├┤  ││
 --  ┴└─┴ ┴┘└┘└─┘└─┘─┴┘
 
-SkitariusBindManager.valid_ranged_setting = function(self, setting_name)
+ForktideBindManager.valid_ranged_setting = function(self, setting_name)
     return RANGED_TEMPLATE[setting_name] ~= nil
 end
 
-SkitariusBindManager.set_ranged_setting = function(self, setting_name)
+ForktideBindManager.set_ranged_setting = function(self, setting_name)
     local mod = self.mod
     local temp_bind = mod:get("keybind_selection_ranged")
     local temp_weapon = mod:get("ranged_weapon_selection")
@@ -284,7 +284,7 @@ SkitariusBindManager.set_ranged_setting = function(self, setting_name)
     mod:set("bind_data", self.bind_data, false)
 end
 
-SkitariusBindManager.reset_ranged_binds = function(self)
+ForktideBindManager.reset_ranged_binds = function(self)
     local mod = self.mod
     local temp_weapon = mod:get("ranged_weapon_selection")
     mod:set("keybind_selection_ranged", "override_primary", false)
@@ -300,7 +300,7 @@ SkitariusBindManager.reset_ranged_binds = function(self)
     mod:set("reset_weapon_ranged", false, false)
 end
 
-SkitariusBindManager.reset_all_ranged_binds = function(self)
+ForktideBindManager.reset_all_ranged_binds = function(self)
     local mod = self.mod
     for key, _ in pairs(self.bind_data) do
         self.bind_data[key].RANGED = {
@@ -316,7 +316,7 @@ SkitariusBindManager.reset_all_ranged_binds = function(self)
     mod:set("reset_all_ranged", false, false)
 end
 
-SkitariusBindManager.set_ranged_weapon_or_keybind = function(self)
+ForktideBindManager.set_ranged_weapon_or_keybind = function(self)
     local mod = self.mod
     local temp_weapon = mod:get("ranged_weapon_selection")
     local temp_bind = mod:get("keybind_selection_ranged")
@@ -333,7 +333,7 @@ end
 --  ╠╩╗║║║║ ║║  ║║║╠═╣║║║╠═╣║ ╦║╣ ║║║║╣ ║║║ ║ 
 --  ╚═╝╩╝╚╝═╩╝  ╩ ╩╩ ╩╝╚╝╩ ╩╚═╝╚═╝╩ ╩╚═╝╝╚╝ ╩ 
 
-SkitariusBindManager.bind_handler = function(self, bind, first)
+ForktideBindManager.bind_handler = function(self, bind, first)
     -- Do not allow bind handling while chat is open
     if not Managers.ui:chat_using_input() then
         local active_binds = self.active_binds
@@ -382,7 +382,7 @@ SkitariusBindManager.bind_handler = function(self, bind, first)
 end
 
 -- Sets override_primary "keybind" if holding or initially pressing action_one
-SkitariusBindManager.maybe_update_primary_override = function(self, action_name, out)
+ForktideBindManager.maybe_update_primary_override = function(self, action_name, out)
     local active_binds = self.active_binds
     if action_name == "action_one_hold" or (action_name == "action_one_pressed" and out) then
         if out and not active_binds.override_primary then
@@ -393,7 +393,7 @@ SkitariusBindManager.maybe_update_primary_override = function(self, action_name,
     end
 end
 
-SkitariusBindManager.update_binds = function(self)
+ForktideBindManager.update_binds = function(self)
     local engram = self.engram
     local current_command = engram:current_command()
     local weapon_manager = self.weapon_manager
@@ -432,7 +432,7 @@ end
 --  ═╩╝╩ ╩ ╩ ╩ ╩  ╩ ╩╩ ╩╝╚╝╩ ╩╚═╝╚═╝╩ ╩╚═╝╝╚╝ ╩ 
 
 -- Returns true if any binds are currently active; ignores engram state except for override_primary
-SkitariusBindManager.any_binds = function(self)
+ForktideBindManager.any_binds = function(self)
     local active_binds = self.active_binds
     local engram = self.engram
     for key, _ in pairs(active_binds) do
@@ -449,11 +449,11 @@ SkitariusBindManager.any_binds = function(self)
     return false
 end
 
-SkitariusBindManager.get_bind_data = function(self)
+ForktideBindManager.get_bind_data = function(self)
     return self.bind_data
 end
 
-SkitariusBindManager.primary_charge_threshold = function(self, weapon_name)
+ForktideBindManager.primary_charge_threshold = function(self, weapon_name)
     local primary = self.bind_data and self.bind_data.override_primary
     local ranged = primary and primary.RANGED
     local weapon = ranged and ranged[weapon_name]
@@ -464,43 +464,43 @@ SkitariusBindManager.primary_charge_threshold = function(self, weapon_name)
     end
 end
 
-SkitariusBindManager.get_input_table = function(self)
+ForktideBindManager.get_input_table = function(self)
     return self.input
 end
 
-SkitariusBindManager.input_value = function(self, input_name)
+ForktideBindManager.input_value = function(self, input_name)
     local input = self.input[input_name]
     if input then
         return input.value
     end
 end
 
-SkitariusBindManager.set_input_value = function(self, input_name, value)
+ForktideBindManager.set_input_value = function(self, input_name, value)
     local input = self.input[input_name]
     if input then
         input.value = value
     end
 end
 
-SkitariusBindManager.input_key = function(self, input_name)
+ForktideBindManager.input_key = function(self, input_name)
     local input = self.input[input_name]
     if input then
         return input.key
     end
 end
 
-SkitariusBindManager.set_input_key = function(self, input_name, key)
+ForktideBindManager.set_input_key = function(self, input_name, key)
     local input = self.input[input_name]
     if input then
         input.key = key
     end
 end
 
-SkitariusBindManager.override_primary = function(self)
+ForktideBindManager.override_primary = function(self)
     return self.active_binds.override_primary
 end
 
-SkitariusBindManager.waiting_toggles = function(self)
+ForktideBindManager.waiting_toggles = function(self)
     for key, value in pairs(self.active_binds) do
         if string.find(key, "pressed") and value then
             return true
@@ -509,8 +509,8 @@ SkitariusBindManager.waiting_toggles = function(self)
     return false
 end
 
-SkitariusBindManager.monitored_action = function(self, action_name)
+ForktideBindManager.monitored_action = function(self, action_name)
     return self.monitored_actions[action_name] or false
 end
 
-return SkitariusBindManager
+return ForktideBindManager

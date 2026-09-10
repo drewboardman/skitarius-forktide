@@ -9,7 +9,7 @@ end
 local localizations = {
     -- Mod Details
     mod_name = {
-        en = "Skitarius",
+        en = "Forktide",
         ["zh-tw"] = "機械教信徒",
         ["zh-cn"] = "战斗序列（鼠标宏）",
     },

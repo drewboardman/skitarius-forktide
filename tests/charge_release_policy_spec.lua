@@ -1,4 +1,4 @@
-local ChargeRelease = dofile("scripts/mods/Skitarius/modules/SkitariusChargeRelease.lua")
+local ChargeRelease = dofile("scripts/mods/Forktide/modules/ForktideChargeRelease.lua")
 
 describe("charge release policy", function()
     describe("threshold selection", function()

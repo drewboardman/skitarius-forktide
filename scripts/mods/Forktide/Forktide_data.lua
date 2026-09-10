@@ -1,4 +1,4 @@
-local mod = get_mod("Skitarius")
+local mod = get_mod("Forktide")
 
 local UiSettings = require("scripts/settings/ui/ui_settings")
 local WeaponTemplates = require("scripts/settings/equipment/weapon_templates/weapon_templates")

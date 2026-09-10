@@ -1,4 +1,4 @@
-SkitariusOmnissiah = class("SkitariusOmnissiah")
+ForktideOmnissiah = class("ForktideOmnissiah")
 
 local LAST_SHOT = {
     ADS = 0,
@@ -344,7 +344,7 @@ local SWAP = {
     COOLDOWN = 0.2
 }
 
-SkitariusOmnissiah.init = function(self, mod)
+ForktideOmnissiah.init = function(self, mod)
     self.mod = mod
     self.engram = mod.engram
     self.weapon_manager = mod.weapon_manager
@@ -355,7 +355,7 @@ SkitariusOmnissiah.init = function(self, mod)
     self.current_action_time = 0
 end
 
-SkitariusOmnissiah.set_bind_manager = function(self, bind_manager)
+ForktideOmnissiah.set_bind_manager = function(self, bind_manager)
     self.bind_manager = bind_manager
 end
 
@@ -363,7 +363,7 @@ end
 --  ╠═╣║   ║ ║║ ║║║║  ╠═╣╠═╣║║║ ║║║  ║╣ ╠╦╝
 --  ╩ ╩╚═╝ ╩ ╩╚═╝╝╚╝  ╩ ╩╩ ╩╝╚╝═╩╝╩═╝╚═╝╩╚═
 
-SkitariusOmnissiah.omnissiah = function(self, queried_input, user_value)
+ForktideOmnissiah.omnissiah = function(self, queried_input, user_value)
     local is_interrupted = self:maybe_force_interrupt()
 
     local current_action = self:get_action()
@@ -426,7 +426,7 @@ end
 -- STAGE 0: CREATE A TEMPORARY ENGRAM OR HALT SEQUENCE IF SITUATION REQUIRES IT --
 --//////////////////////////////////////////////////////////////////////////////--
 
-SkitariusOmnissiah.maybe_force_interrupt = function(self)
+ForktideOmnissiah.maybe_force_interrupt = function(self)
     local engram = self.engram
     local current_command = engram:current_command()
     local input_table = self.bind_manager:get_input_table()
@@ -481,7 +481,7 @@ end
 -- STAGE 1: COLLECT INITIAL RUNNING ACTION NAME --
 -- /////////////////////////////////////////////--
 
-SkitariusOmnissiah.get_action = function(self)
+ForktideOmnissiah.get_action = function(self)
     local player = Managers.player:local_player_safe(1)
 
     if not player then
@@ -520,7 +520,7 @@ end
 -- STAGE 2: DISTILL ACTION NAMES TO ACTION DATA WHICH CAN BE RECOGNIZED BY THE OMNISSIAH --
 -- //////////////////////////////////////////////////////////////////////////////////////--
 
-SkitariusOmnissiah.action_to_step = function(self, action_name)
+ForktideOmnissiah.action_to_step = function(self, action_name)
     local weapon_manager = self.weapon_manager
     local engram = self.engram
     local weapon_name = weapon_manager:weapon_name()
@@ -600,7 +600,7 @@ end
 -- STAGE 3: ALTER ACTION DATA IF/WHEN THAT DATA DOES NOT ALIGN WITH HOW THE OMNISSIAH SHOULD TREAT IT --
 -- ///////////////////////////////////////////////////////////////////////////////////////////////////--
 
-SkitariusOmnissiah.maybe_convert_action = function(self, player_unit, running_action, handler_data, action_settings, action_name, original_name)
+ForktideOmnissiah.maybe_convert_action = function(self, player_unit, running_action, handler_data, action_settings, action_name, original_name)
     if not action_name then
         return action_name
     end
@@ -725,7 +725,7 @@ end
 -- STAGE 4: ALTER ENGRAM COMMAND DATA AS NEEDED DEPENDING ON THE CURRENT SITUATION --
 -- ////////////////////////////////////////////////////////////////////////////////--
 
-SkitariusOmnissiah.maybe_convert_desire = function(self, current_action, desired_action)
+ForktideOmnissiah.maybe_convert_desire = function(self, current_action, desired_action)
     if not desired_action then
         return desired_action
     end
@@ -809,7 +809,7 @@ end
 -- STAGE 5: OVERRIDE OMNISSIAH'S DECISION IF IT CONFLICTS WITH VALID USER INPUT --
 --//////////////////////////////////////////////////////////////////////////////--
 
-SkitariusOmnissiah.resolve_conflicts = function(self, input, user, omnissiah, current_action, desired_action)
+ForktideOmnissiah.resolve_conflicts = function(self, input, user, omnissiah, current_action, desired_action)
     local outcome = omnissiah
     local armoury = self.armoury
     local engram = self.engram
@@ -882,7 +882,7 @@ end
 --  ╩ ╩╚═╝╩═╝╩  ╚═╝╩╚═  ╚  ╚═╝╝╚╝╚═╝╚═╝
 
 -- Returns true if the engram should iterate regardless of whether or not the current state matches the desired one
-SkitariusOmnissiah.should_skip = function(self, current_action, desired_action)
+ForktideOmnissiah.should_skip = function(self, current_action, desired_action)
     local weapon_manager = self.weapon_manager
     local armoury = self.armoury
     local engram = self.engram
@@ -918,7 +918,7 @@ SkitariusOmnissiah.should_skip = function(self, current_action, desired_action)
 end
 
 -- Sets IS_AIMING or IS_CHARGING dependent on aim/charge actions - only for ranged weapons
-SkitariusOmnissiah.maybe_update_aim = function(self, action)
+ForktideOmnissiah.maybe_update_aim = function(self, action)
     local weapon_manager = self.weapon_manager
 
     if not action or not weapon_manager:weapon_type() == "RANGED" then
@@ -940,7 +940,7 @@ SkitariusOmnissiah.maybe_update_aim = function(self, action)
     end
 end
 
-SkitariusOmnissiah.maybe_update_shooting = function(self, start_time, action, action_settings)
+ForktideOmnissiah.maybe_update_shooting = function(self, start_time, action, action_settings)
     if not start_time or not action or not action_settings then return end
     if self:is_shoot_action(action, action_settings) then
         if self.weapon_manager:is_aiming() then
@@ -953,7 +953,7 @@ end
 
 -- Returns true if the mod should halt user and mod input and freeze engram; allows user passthrough for actions in DO_NOT_PAUSE table
 -- KNOWN BUG: DELAY IS NOT WORKING PROPERLY FOR SOME WEAPONS DUE TO ACTION CHAIN TIMES NOT BEING ACCOUNTED FOR WHEN SETTING DELAYS
-SkitariusOmnissiah.pause = function(self)
+ForktideOmnissiah.pause = function(self)
     local engram = self.engram
     local weapon_manager = self.weapon_manager
 
@@ -1000,26 +1000,26 @@ SkitariusOmnissiah.pause = function(self)
     return false
 end
 
-SkitariusOmnissiah.set_swap = function(self, occurred)
+ForktideOmnissiah.set_swap = function(self, occurred)
     SWAP.OCCURRED = occurred
     if occurred then
         SWAP.LIMITER = true  -- Enable the limiter when swap occurs
     end
 end
 
-SkitariusOmnissiah.reset_last_shot = function(self)
+ForktideOmnissiah.reset_last_shot = function(self)
     LAST_SHOT.ADS = 0
     LAST_SHOT.HIP = 0
 end
 
-SkitariusOmnissiah.maybe_reset_last_shot = function(self, action, value)
+ForktideOmnissiah.maybe_reset_last_shot = function(self, action, value)
     if action == "action_one_hold" and not value then
         self:reset_last_shot()
     end
 end
 
-SkitariusOmnissiah.is_shoot_action = function(self, action, action_settings)
+ForktideOmnissiah.is_shoot_action = function(self, action, action_settings)
     return action == "shoot" or type(action_settings.kind) == "string" and (string.find(action_settings.kind, "shoot") or string.find(action_settings.kind, "projectile") or string.find(action_settings.kind, "burst") or string.find(action_settings.kind, "chain") or string.find(action_settings.kind, "spawn"))
 end
 
-return SkitariusOmnissiah
+return ForktideOmnissiah

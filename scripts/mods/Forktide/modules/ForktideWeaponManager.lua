@@ -1,4 +1,4 @@
-local SkitariusWeaponManager = class("SkitariusWeaponManager")
+local ForktideWeaponManager = class("ForktideWeaponManager")
 local WeaponTemplates = require("scripts/settings/equipment/weapon_templates/weapon_templates")
 local Ammo = require("scripts/utilities/ammo")
 
@@ -110,7 +110,7 @@ local function _fetch_stack_count_from_buff_list(buff_list, target_name)
     return stacks
 end
 
-SkitariusWeaponManager.init = function(self, mod)
+ForktideWeaponManager.init = function(self, mod)
     self.mod = mod
     self.armoury = mod.armoury
     self.engram = mod.engram
@@ -130,11 +130,11 @@ SkitariusWeaponManager.init = function(self, mod)
     }
 end
 
-SkitariusWeaponManager.set_bind_manager = function(self, binds)
+ForktideWeaponManager.set_bind_manager = function(self, binds)
     self.binds = binds
 end
 
-SkitariusWeaponManager.set_omnissiah = function(self, omnissiah)
+ForktideWeaponManager.set_omnissiah = function(self, omnissiah)
     self.omnissiah = omnissiah
 end
 
@@ -142,7 +142,7 @@ end
 --  ║║║║╣ ╠═╣╠═╝║ ║║║║   ║║╠═╣ ║ ╠═╣
 --  ╚╩╝╚═╝╩ ╩╩  ╚═╝╝╚╝  ═╩╝╩ ╩ ╩ ╩ ╩
 
-SkitariusWeaponManager.refresh_weapon = function(self)
+ForktideWeaponManager.refresh_weapon = function(self)
     local wielded_slot
     local weapon_name
 
@@ -197,14 +197,14 @@ SkitariusWeaponManager.refresh_weapon = function(self)
     self.type = wielded_slot
 end
 
-SkitariusWeaponManager.weapon_name = function(self)
+ForktideWeaponManager.weapon_name = function(self)
     if not self.name or self.name == "none" then
         self:refresh_weapon()
     end
     return self.name
 end
 
-SkitariusWeaponManager.weapon_type = function(self)
+ForktideWeaponManager.weapon_type = function(self)
     if not self.type or self.type == "none" then
         self:refresh_weapon()
     end
@@ -216,7 +216,7 @@ SkitariusWeaponManager.weapon_type = function(self)
     return "none"
 end
 
-SkitariusWeaponManager.get_equipped = function(self, target)
+ForktideWeaponManager.get_equipped = function(self, target)
     local player = Managers.player:local_player_safe(1)
     local player_unit = player and player.player_unit
     local weapon_extension = player_unit and ScriptUnit.has_extension(player_unit, "weapon_system")
@@ -238,7 +238,7 @@ SkitariusWeaponManager.get_equipped = function(self, target)
     return nil
 end
 
-SkitariusWeaponManager.current_equipped = function(self)
+ForktideWeaponManager.current_equipped = function(self)
     if not self.type or self.type == "none" then
         self:refresh_weapon()
     end
@@ -250,7 +250,7 @@ SkitariusWeaponManager.current_equipped = function(self)
     return "none"
 end
 
-SkitariusWeaponManager.can_reload = function(self)
+ForktideWeaponManager.can_reload = function(self)
     local weapon_type = self:weapon_type()
     local weapon_name = self:weapon_name()
     local warp = self.warp or 0
@@ -269,7 +269,7 @@ SkitariusWeaponManager.can_reload = function(self)
 end
 
 -- Returns true if the player's ranged weapon is missing clip ammo and has reserve ammo to reload with - this does not check if the weapon is currently available to be reloaded
-SkitariusWeaponManager.ranged_reload_available = function(self)
+ForktideWeaponManager.ranged_reload_available = function(self)
     local player = Managers.player:local_player_safe(1)
     local player_unit = player and player.player_unit
     local unit_data_extension = player_unit and ScriptUnit.has_extension(player_unit, "unit_data_system")
@@ -299,7 +299,7 @@ end
 --  ║║║║╣ ╠═╣╠═╝║ ║║║║  ╚═╗ ║ ╠═╣ ║ ║ ║╚═╗
 --  ╚╩╝╚═╝╩ ╩╩  ╚═╝╝╚╝  ╚═╝ ╩ ╩ ╩ ╩ ╚═╝╚═╝
 
-SkitariusWeaponManager.is_charged_melee = function(self, running_action, component, action_settings)
+ForktideWeaponManager.is_charged_melee = function(self, running_action, component, action_settings)
     if not running_action or not component or not action_settings then return false end
     local armoury = self.armoury
     local engram = self.engram
@@ -385,7 +385,7 @@ SkitariusWeaponManager.is_charged_melee = function(self, running_action, compone
     return false
 end
 
-SkitariusWeaponManager.is_charged_ranged = function(self, weenie_hut_jr)
+ForktideWeaponManager.is_charged_ranged = function(self, weenie_hut_jr)
     if not self:weapon_type() == "RANGED" then return false end
     local engram = self.engram
     local player = Managers.player:local_player_safe(1)
@@ -426,7 +426,7 @@ SkitariusWeaponManager.is_charged_ranged = function(self, weenie_hut_jr)
     return fully_charged
 end
 
-SkitariusWeaponManager.is_light_complete = function(self, running_action, component, action_settings)
+ForktideWeaponManager.is_light_complete = function(self, running_action, component, action_settings)
     if not running_action or not component or not action_settings then return false end
     local t = Managers.time:time("gameplay")
     local allowed_chain_actions = action_settings.allowed_chain_actions or {}
@@ -444,7 +444,7 @@ SkitariusWeaponManager.is_light_complete = function(self, running_action, compon
     return false
 end
 
-SkitariusWeaponManager.current_charge = function(self)
+ForktideWeaponManager.current_charge = function(self)
     local player = Managers.player:local_player_safe(1)
     local player_unit = player and player.player_unit
     local weapon_extension = player_unit and ScriptUnit.has_extension(player_unit, "weapon_system")
@@ -459,7 +459,7 @@ SkitariusWeaponManager.current_charge = function(self)
     return charge
 end
 
-SkitariusWeaponManager.is_blocking = function(self)
+ForktideWeaponManager.is_blocking = function(self)
     local player = Managers.player:local_player_safe(1)
     local player_unit = player and player.player_unit
     local unit_data_extension = player_unit and ScriptUnit.has_extension(player_unit, "unit_data_system")
@@ -470,7 +470,7 @@ SkitariusWeaponManager.is_blocking = function(self)
     return false
 end
 
-SkitariusWeaponManager.in_cooldown = function(self)
+ForktideWeaponManager.in_cooldown = function(self)
     local player_manager = Managers and Managers.player
     local player = player_manager:local_player_safe(1)
     local player_unit = player and player.player_unit
@@ -588,7 +588,7 @@ SkitariusWeaponManager.in_cooldown = function(self)
     return false
 end
 
-SkitariusWeaponManager.special_active = function(self)
+ForktideWeaponManager.special_active = function(self)
     local player_manager = Managers and Managers.player
     local player = player_manager:local_player_safe(1)
     local player_unit = player and player.player_unit
@@ -613,17 +613,17 @@ SkitariusWeaponManager.special_active = function(self)
     return false
 end
 
-SkitariusWeaponManager.should_sprint = function(self)
+ForktideWeaponManager.should_sprint = function(self)
     return self:can_sprint() and self:safe_to_sprint()
 end
 
-SkitariusWeaponManager.can_sprint = function(self)
+ForktideWeaponManager.can_sprint = function(self)
 end
 
-SkitariusWeaponManager.safe_to_sprint = function(self)
+ForktideWeaponManager.safe_to_sprint = function(self)
 end
 
-SkitariusWeaponManager.is_sprinting = function(self)
+ForktideWeaponManager.is_sprinting = function(self)
     local player = Managers.player:local_player_safe(1)
     local player_unit = player and player.player_unit
     local unit_data_extension = player_unit and ScriptUnit.has_extension(player_unit, "unit_data_system")
@@ -634,7 +634,7 @@ SkitariusWeaponManager.is_sprinting = function(self)
     return false
 end
 
-SkitariusWeaponManager.is_stable_sprinting = function(self)
+ForktideWeaponManager.is_stable_sprinting = function(self)
     if self.sprint.full then
         if self.sprint.speed > DEFAULT_WALK_SPEED then
             -- Ready if sprinting and no longer accelerating
@@ -643,7 +643,7 @@ SkitariusWeaponManager.is_stable_sprinting = function(self)
     end
 end
 
-SkitariusWeaponManager.update_speed = function(self)
+ForktideWeaponManager.update_speed = function(self)
     local player = Managers.player:local_player_safe(1)
     local alive = player and player:unit_is_alive()
     -- Reset history on player state change
@@ -667,7 +667,7 @@ SkitariusWeaponManager.update_speed = function(self)
     self.sprint.speed = velocity or 0
 end
 
-SkitariusWeaponManager.update_sprint_buffer = function(self)
+ForktideWeaponManager.update_sprint_buffer = function(self)
     self:update_speed()
     table.insert(self.sprint.buffer, self.sprint.speed)
     self.sprint.count = self.sprint.count + 1
@@ -678,13 +678,13 @@ SkitariusWeaponManager.update_sprint_buffer = function(self)
     end
 end
 
-SkitariusWeaponManager.clear_sprint_buffer = function(self)
+ForktideWeaponManager.clear_sprint_buffer = function(self)
     self.sprint.buffer = {}
     self.sprint.full = false
     self.sprint.count = 0
 end
 
-SkitariusWeaponManager.plateau = function(self)
+ForktideWeaponManager.plateau = function(self)
     -- Initialize
     local min_vel = self.sprint.buffer[1] or 0
     local max_vel = self.sprint.buffer[1] or 0
@@ -698,7 +698,7 @@ SkitariusWeaponManager.plateau = function(self)
     return (max_vel - min_vel) <= self.sprint.threshold
 end
 
-SkitariusWeaponManager.is_sliding = function(self)
+ForktideWeaponManager.is_sliding = function(self)
     local player = Managers.player:local_player_safe(1)
     local player_unit = player and player.player_unit
     local unit_data_extension = player_unit and ScriptUnit.has_extension(player_unit, "unit_data_system")
@@ -709,35 +709,35 @@ SkitariusWeaponManager.is_sliding = function(self)
     return false
 end
 
-SkitariusWeaponManager.set_aiming = function(self, aiming)
+ForktideWeaponManager.set_aiming = function(self, aiming)
     self.aiming = aiming
 end
 
-SkitariusWeaponManager.is_aiming = function(self)
+ForktideWeaponManager.is_aiming = function(self)
     return self.aiming
 end
 
-SkitariusWeaponManager.set_charging = function(self, charging)
+ForktideWeaponManager.set_charging = function(self, charging)
     self.charging = charging
 end
 
-SkitariusWeaponManager.is_charging = function(self)
+ForktideWeaponManager.is_charging = function(self)
     return self.charging
 end
 
-SkitariusWeaponManager.set_pushing = function(self, pushing)
+ForktideWeaponManager.set_pushing = function(self, pushing)
     self.pushing = pushing
 end
 
-SkitariusWeaponManager.is_pushing = function(self)
+ForktideWeaponManager.is_pushing = function(self)
     return self.pushing
 end
 
-SkitariusWeaponManager.set_firing = function(self, firing)
+ForktideWeaponManager.set_firing = function(self, firing)
     self.firing = firing
 end
 
-SkitariusWeaponManager.is_firing = function(self)
+ForktideWeaponManager.is_firing = function(self)
     return self.firing
 end
 
@@ -745,7 +745,7 @@ end
 --   ║║╠═╣ ║ ╠═╣  ║║║╠═╣║║║╠═╣║ ╦║╣ ║║║║╣ ║║║ ║
 --  ═╩╝╩ ╩ ╩ ╩ ╩  ╩ ╩╩ ╩╝╚╝╩ ╩╚═╝╚═╝╩ ╩╚═╝╝╚╝ ╩
 
-SkitariusWeaponManager.update_peril = function(self)
+ForktideWeaponManager.update_peril = function(self)
     local player_manager = Managers and Managers.player
     if player_manager then
         local player = player_manager:local_player_safe(1)
@@ -770,7 +770,7 @@ end
 
 -- Getting specific transition times are tricky as they are generally unique per-weapon, so this is a failsafe
 -- Needs more work before this should be used in release
-SkitariusWeaponManager.firing_chain_time = function(self)
+ForktideWeaponManager.firing_chain_time = function(self)
     local weapon_type = self:weapon_type()
     local weapon_name = self:weapon_name()
     if weapon_type ~= "RANGED" then
@@ -808,13 +808,13 @@ SkitariusWeaponManager.firing_chain_time = function(self)
     end
 end
 
-SkitariusWeaponManager.generates_peril_wrapper = function(self, input)
+ForktideWeaponManager.generates_peril_wrapper = function(self, input)
     local armoury = self.armoury
     local scriers = self:fetch_stacks("psyker_overcharge_stance_infinite_casting")
     return armoury:generates_peril(input, scriers)
 end
 
-SkitariusWeaponManager.suicidal = function(self, input, weenie_hut_jr)
+ForktideWeaponManager.suicidal = function(self, input, weenie_hut_jr)
     if not weenie_hut_jr then return false end
     if (input == "action_one_hold" or input == "action_one_pressed") and self.pushing then
         input = "push_follow_up"
@@ -839,7 +839,7 @@ local interruption_map = {
     interruption_all         = { sprinting = true, blocking = true, attacking = true }
 }
 
-SkitariusWeaponManager.interruption = function(self)
+ForktideWeaponManager.interruption = function(self)
     local halt_on_interrupt = self.mod.settings.halt_on_interrupt
     if not halt_on_interrupt then return false end
     local interruption_type = self.mod.settings.halt_on_interrupt_types
@@ -868,7 +868,7 @@ SkitariusWeaponManager.interruption = function(self)
     return false
 end
 
-SkitariusWeaponManager.has_trait_or_talent = function(self, trait_or_talent)
+ForktideWeaponManager.has_trait_or_talent = function(self, trait_or_talent)
     local player = Managers.player:local_player_safe(1)
     local player_unit = player and player.player_unit
     local buff_extension = player_unit and ScriptUnit.has_extension(player_unit, "buff_system")
@@ -891,7 +891,7 @@ SkitariusWeaponManager.has_trait_or_talent = function(self, trait_or_talent)
     return false
 end
 
-SkitariusWeaponManager.fetch_stacks = function(self, buff_name)
+ForktideWeaponManager.fetch_stacks = function(self, buff_name)
     local player = Managers.player:local_player_safe(1)
     local player_unit = player and player.player_unit
     local buff_extension = player_unit and ScriptUnit.has_extension(player_unit, "buff_system")
@@ -939,4 +939,4 @@ SkitariusWeaponManager.fetch_stacks = function(self, buff_name)
     return stacks
 end
 
-return SkitariusWeaponManager
+return ForktideWeaponManager

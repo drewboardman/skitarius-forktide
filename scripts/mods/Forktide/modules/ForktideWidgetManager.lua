@@ -1,10 +1,10 @@
-local SkitariusWidgetManager = class("SkitariusWidgetManager")
+local ForktideWidgetManager = class("ForktideWidgetManager")
 
-local skitarius_hud_element = {
+local forktide_hud_element = {
     package = "packages/ui/views/inventory_background_view/inventory_background_view",
     use_hud_scale = true,
-    class_name = "HudElementSkitarius",
-    filename = "Skitarius/scripts/mods/Skitarius/modules/HudElementSkitarius",
+    class_name = "HudElementForktide",
+    filename = "Forktide/scripts/mods/Forktide/modules/HudElementForktide",
     visibility_groups = {
         "alive",
         "communication_wheel",
@@ -19,26 +19,26 @@ SETTINGS = {
 }
 
 local _add_hud_element = function(element_pool)
-    local found_key, _ = table.find_by_key(element_pool, "class_name", skitarius_hud_element.class_name)
+    local found_key, _ = table.find_by_key(element_pool, "class_name", forktide_hud_element.class_name)
     if found_key then
-        element_pool[found_key] = skitarius_hud_element
+        element_pool[found_key] = forktide_hud_element
     else
-        table.insert(element_pool, skitarius_hud_element)
+        table.insert(element_pool, forktide_hud_element)
     end
 end
 
-SkitariusWidgetManager.init = function(self, mod)
+ForktideWidgetManager.init = function(self, mod)
     self.mod = mod
     self.active = mod:get("hud_element") or false
     self.size = mod:get("hud_element_size") or 50
     self.type = mod:get("hud_element_type") or "color"
     -- Inject HUD element
-    mod:add_require_path(skitarius_hud_element.filename)
+    mod:add_require_path(forktide_hud_element.filename)
     mod:hook_require("scripts/ui/hud/hud_elements_player_onboarding", _add_hud_element)
     mod:hook_require("scripts/ui/hud/hud_elements_player", _add_hud_element)
 end
 
-SkitariusWidgetManager.set_bind_manager = function(self, bind_manager)
+ForktideWidgetManager.set_bind_manager = function(self, bind_manager)
     self.bind_manager = bind_manager
 end
 
@@ -46,11 +46,11 @@ end
 --  ╚═╗║╣  ║  ║ ║║║║║ ╦╚═╗
 --  ╚═╝╚═╝ ╩  ╩ ╩╝╚╝╚═╝╚═╝
 
-SkitariusWidgetManager.widget_setting = function(self, setting_name)
+ForktideWidgetManager.widget_setting = function(self, setting_name)
     return SETTINGS[setting_name]
 end
 
-SkitariusWidgetManager.set_widget_setting = function(self, setting_name)
+ForktideWidgetManager.set_widget_setting = function(self, setting_name)
     local value = self.mod:get(setting_name)
     if setting_name == "hud_element" then
         self:set_status(value)
@@ -61,18 +61,18 @@ SkitariusWidgetManager.set_widget_setting = function(self, setting_name)
     end
 end
 
-SkitariusWidgetManager.set_status = function(self, status)
+ForktideWidgetManager.set_status = function(self, status)
     self.active = status
 end
 
-SkitariusWidgetManager.set_size = function(self, size)
+ForktideWidgetManager.set_size = function(self, size)
     local hud_element = self:get_hud_element()
     if hud_element then
         hud_element:set_size(size or 50)
     end
 end
 
-SkitariusWidgetManager.set_type = function(self, type)
+ForktideWidgetManager.set_type = function(self, type)
     self.type = type
 end
 
@@ -80,13 +80,13 @@ end
 --  ╠═╣║ ║ ║║  ║║║╠═╣║║║╠═╣║ ╦║╣ ║║║║╣ ║║║ ║ 
 --  ╩ ╩╚═╝═╩╝  ╩ ╩╩ ╩╝╚╝╩ ╩╚═╝╚═╝╩ ╩╚═╝╝╚╝ ╩ 
 
-SkitariusWidgetManager.get_hud_element = function(self)
+ForktideWidgetManager.get_hud_element = function(self)
     local hud = Managers.ui:get_hud()
-    return hud and hud:element("HudElementSkitarius")
+    return hud and hud:element("HudElementForktide")
 end
 
 -- Set HUD element state based on mod status
-SkitariusWidgetManager.update_hud = function(self)
+ForktideWidgetManager.update_hud = function(self)
     local hud_element = self:get_hud_element()
     if hud_element then
         if self.active then
@@ -132,4 +132,4 @@ SkitariusWidgetManager.update_hud = function(self)
     end
 end
 
-return SkitariusWidgetManager
+return ForktideWidgetManager

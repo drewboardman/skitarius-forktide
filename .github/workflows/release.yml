@@ -37,11 +37,11 @@ jobs:
           version="${{ inputs.version || github.ref_name }}"
           tools/package.sh "$version" >/dev/null
           echo "version=$version" >> "$GITHUB_OUTPUT"
-          echo "archive=release/Skitarius-$version.zip" >> "$GITHUB_OUTPUT"
+          echo "archive=release/Forktide-$version.zip" >> "$GITHUB_OUTPUT"
       - name: Upload release package
         uses: actions/upload-artifact@v7
         with:
-          name: Skitarius-${{ steps.package.outputs.version }}
+          name: Forktide-${{ steps.package.outputs.version }}
           path: ${{ steps.package.outputs.archive }}
           if-no-files-found: error
       - name: Publish release
@@ -54,7 +54,7 @@ jobs:
             gh release upload "$version" "$archive" --clobber
           else
             gh release create "$version" "$archive" \
-              --title "Skitarius $version" \
-              --notes "Extract the attached zip into your Darktide \`mods\` folder. It unpacks as \`mods/Skitarius/\`, the layout Darktide Mod Framework expects. Add \`Skitarius\` to \`mod_load_order.txt\` if it is not listed already, then restart the game." \
+              --title "Forktide $version" \
+              --notes "Extract the attached zip into your Darktide \`mods\` folder. It unpacks as \`mods/Forktide/\`, the layout Darktide Mod Framework expects. Add \`Forktide\` to \`mod_load_order.txt\` if it is not listed already, then restart the game." \
               --generate-notes
           fi

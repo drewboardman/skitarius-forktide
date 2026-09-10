@@ -1,4 +1,4 @@
-local mod = get_mod("Skitarius")
+local mod = get_mod("Forktide")
 
 local UIWorkspaceSettings = require("scripts/settings/ui/ui_workspace_settings")
 local UIWidget = require("scripts/managers/ui/ui_widget")
@@ -6,7 +6,7 @@ local UIWidget = require("scripts/managers/ui/ui_widget")
 local ui_definitions = {
     scenegraph_definition = {
         screen = UIWorkspaceSettings.screen,
-        skitarius_container = {
+        forktide_container = {
             parent = "screen",
             vertical_alignment = "bottom",
             horizontal_alignment = "right",
@@ -19,7 +19,7 @@ local ui_definitions = {
         }
     },
     widget_definitions = {
-        skitarius = UIWidget.create_definition({
+        forktide = UIWidget.create_definition({
             {
                 style_id = "icon",
                 value_id = "icon",
@@ -29,14 +29,14 @@ local ui_definitions = {
                     size = { nil, nil },
                 }
             }
-        }, "skitarius_container")
+        }, "forktide_container")
     }
 }
 
-local HudElementSkitarius = class("HudElementSkitarius", "HudElementBase")
+local HudElementForktide = class("HudElementForktide", "HudElementBase")
 
-HudElementSkitarius.init = function(self, parent, draw_layer, start_scale)
-    HudElementSkitarius.super.init(self, parent, draw_layer, start_scale, ui_definitions)
+HudElementForktide.init = function(self, parent, draw_layer, start_scale)
+    HudElementForktide.super.init(self, parent, draw_layer, start_scale, ui_definitions)
     self:set_size(mod:get("hud_element_size"))
     self:set_icon("circumstances/maelstrom_01")
     self:set_visible(false)
@@ -50,15 +50,15 @@ local ICON_PATHS = {
     ["circumstances/special_waves_01"] = "content/ui/materials/icons/circumstances/special_waves_01",
 }
 
-HudElementSkitarius.set_visible = function(self, vis)
-    local style = self._widgets_by_name.skitarius.style.icon
+HudElementForktide.set_visible = function(self, vis)
+    local style = self._widgets_by_name.forktide.style.icon
     if style.visible ~= vis then
         style.visible = vis
     end
 end
 
-HudElementSkitarius.set_color = function(self, a, r, g, b)
-    local style = self._widgets_by_name.skitarius.style.icon
+HudElementForktide.set_color = function(self, a, r, g, b)
+    local style = self._widgets_by_name.forktide.style.icon
     local color = style.color
     if color and color[1] == a and color[2] == r and color[3] == g and color[4] == b then
         return
@@ -66,14 +66,14 @@ HudElementSkitarius.set_color = function(self, a, r, g, b)
     style.color = { a, r, g, b }
 end
 
-HudElementSkitarius.set_size = function(self, side_length)
-    local widget_size = self._widgets_by_name.skitarius.style.icon.size
+HudElementForktide.set_size = function(self, side_length)
+    local widget_size = self._widgets_by_name.forktide.style.icon.size
     widget_size[1] = side_length
     widget_size[2] = side_length
 end
 
-HudElementSkitarius.set_icon = function(self, icon)
-    local content = self._widgets_by_name.skitarius.content
+HudElementForktide.set_icon = function(self, icon)
+    local content = self._widgets_by_name.forktide.content
     local icon_path = ICON_PATHS[icon] or ("content/ui/materials/icons/" .. icon)
     if content.icon ~= icon_path then
         content.icon = icon_path
@@ -86,4 +86,4 @@ end
 
 --]]
 
-return HudElementSkitarius
+return HudElementForktide

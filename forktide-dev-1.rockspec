@@ -1,7 +1,7 @@
 rockspec_format = "3.0"
-package = "skitarius"
+package = "forktide"
 version = "dev-1"
-source = { url = "git+https://github.com/CATBIRDS/Skitarius.git" }
+source = { url = "git+https://github.com/drewboardman/skitarius-forktide.git" }
 description = {
     summary = "User-defined action sequences for Darktide",
     license = "GPL-3.0",
