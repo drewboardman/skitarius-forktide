@@ -1,10 +1,26 @@
 # Benchmarks
 
-`run.lua` measures the CPU cost of the mod's hot paths without launching
-Darktide. It drives the real `SkitariusOmnissiah`, `SkitariusWeaponManager`
-and `SkitariusEngram` methods through the same fixture the tests use
+`run.lua` measures the CPU and allocation cost of the mod's hot paths without
+launching Darktide. It drives the real `SkitariusOmnissiah`,
+`SkitariusWeaponManager`, `SkitariusWidgetManager` and `HudElementSkitarius`
+methods through the same fixture the tests use
 (`tests/support/charge_release_fixture.lua`), so the numbers track changes to
 shipping code instead of to a rewrite of it.
+
+## What is measured
+
+Each scenario is measured three ways:
+
+- **ns/op** — median of nine warmed samples with the JIT on (steady state).
+- **ns/op with the JIT off** — the interpreter, worst case before traces
+  compile. LuaJIT only compiles code that runs often, so a function called once
+  per frame can behave very differently from a hot benchmark loop.
+- **bytes/op** — allocations per operation, measured with the collector paused.
+  This is GC pressure, and garbage causes hitches more reliably than raw CPU.
+
+`Runs` records whether a scenario is charged **per frame** (it runs once inside
+`mod.update`) or **per input query** (the engine calls `InputService._get` many
+times per frame, so multiply by the query count).
 
 ## Running
 
@@ -15,9 +31,6 @@ mkdir -p reports
 luajit benchmarks/run.lua > reports/benchmarks.json
 python3 tools/report.py benchmarks reports/benchmarks.json
 ```
-
-The report lists the median and min–max nanoseconds per operation for each
-scenario, which is enough to spot a regression or confirm an optimisation.
 
 ## Comparing against a baseline
 
@@ -30,18 +43,19 @@ luajit benchmarks/run.lua > reports/benchmarks.json
 python3 tools/report.py benchmarks reports/benchmarks.json --baseline reports/baseline.json
 ```
 
-The comparison is only shown when the baseline was recorded with the same
-runtime, OS, architecture, JIT mode, clock source and scenarios, so results
-from a laptop and a CI runner are never mixed. A mismatch is reported as a
-note and the comparison column is left blank instead of failing the command.
+## Why a reference workload
 
-## What the numbers mean
+ns/op describes the machine as much as the code: an M-series laptop core and a
+shared CI runner can differ by 2–3x, so comparing raw numbers across machines is
+meaningless. `run.lua` therefore also times a fixed, allocation-free reference
+workload in the same process, and the report expresses changes relative to it. A
+slower machine shrinks the reference too, so the ratio — and the reported change
+— stays meaningful.
 
-Values are CPU nanoseconds per call, measured with `os.clock()` over a warmed
-batch that auto-scales until each sample runs for at least 50 ms (nine samples,
-normal garbage collection). They include the loop and fixture overhead and are
-**not** frame times or FPS estimates. Compare the same scenario on the same
-machine with the same harness; shared CI runners can vary between builds.
+Reports are only compared at all when the runtime, OS, architecture and JIT
+setting match; anything else is reported as a note and skipped. Even then, treat
+small changes as noise (identical code varies a few percent between runs) and
+read the median, not a single sample.
 
 ## In CI
 
