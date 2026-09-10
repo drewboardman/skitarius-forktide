@@ -59,17 +59,34 @@ def comparison_mismatch(data, previous):
     return None
 
 
-def reference_median(report):
+def reference_median(report, key="ns_per_op"):
     reference = report.get("reference")
-    if reference and reference.get("ns_per_op"):
-        return statistics.median(reference["ns_per_op"])
+    if reference and reference.get(key):
+        return statistics.median(reference[key])
     return None
 
 
-def relative(case, reference):
-    """Cost relative to the reference workload, so machines can be compared."""
-    value = statistics.median(case["ns_per_op"])
-    return value / reference if reference else value
+def baseline_change(case, old, data, previous):
+    """Prefer the interpreter numbers: a tight JIT-compiled loop gets hoisted.
+
+    Reference-normalisation is applied only when both reports carry a reference
+    for the chosen metric, so an old report without one still compares raw.
+    """
+    for key in ("ns_per_op_interpreted", "ns_per_op"):
+        current_samples = case.get(key)
+        before_samples = old.get(key)
+        if not current_samples or not before_samples:
+            continue
+        current = statistics.median(current_samples)
+        before = statistics.median(before_samples)
+        current_reference = reference_median(data, key)
+        before_reference = reference_median(previous, key)
+        if current_reference and before_reference:
+            current = current / current_reference
+            before = before / before_reference
+        if before:
+            return f"{(current / before - 1) * 100:+.1f}%"
+    return "—"
 
 
 def benchmarks(path, baseline):
@@ -92,50 +109,48 @@ def benchmarks(path, baseline):
     print(f"Revision: `{data['revision']}`{' (working tree modified)' if data['dirty'] else ''}.\n")
     if previous:
         print(f"Baseline: `{previous['revision']}`{' (working tree modified)' if previous['dirty'] else ''}.\n")
-    reference = reference_median(data)
-    baseline_reference = reference_median(previous) if previous else None
-    if reference:
-        note = f"Reference workload: {reference:.1f} ns/op"
-        if baseline_reference:
-            note += f" (baseline {baseline_reference:.1f} ns/op)"
-        print(f"{note}. Changes are normalised by it, so they stay meaningful across machines.\n")
+    reference_jit = reference_median(data)
+    reference_interp = reference_median(data, "ns_per_op_interpreted")
+    if reference_jit or reference_interp:
+        parts = []
+        if reference_jit:
+            parts.append(f"{reference_jit:.1f} ns/op (JIT)")
+        if reference_interp:
+            parts.append(f"{reference_interp:.1f} ns/op (interpreter)")
+        print(f"Reference workload: {' / '.join(parts)}. Changes are normalised by it, "
+              "so they stay meaningful across machines.\n")
 
-    print("| Scenario | Runs | ns/op | min–max | bytes/op | Change vs baseline |\n"
+    print("| Scenario | Runs | ns/op (interp) | ns/op (JIT) | bytes/op | Change vs baseline |\n"
           "| :--- | :--- | ---: | ---: | ---: | ---: |")
     old = {case["name"]: case for case in previous["cases"]} if previous else {}
     for case in data["cases"]:
-        samples = case["ns_per_op"]
-        median = statistics.median(samples)
-        spread = f"{min(samples):.1f}–{max(samples):.1f}"
+        interpreted = case.get("ns_per_op_interpreted")
+        interp_text = "—" if not interpreted else f"{statistics.median(interpreted):.1f}"
+        jit_text = f"{statistics.median(case['ns_per_op']):.1f}"
         bytes_per_op = case.get("bytes_per_op")
         byte_text = "—" if bytes_per_op is None else f"{bytes_per_op:.1f}"
-        change = "—"
-        if case["name"] in old:
-            before = relative(old[case["name"]], baseline_reference)
-            if before:
-                change = f"{(relative(case, reference) / before - 1) * 100:+.1f}%"
-        print(f"| {cell(case['name'])} | {cell(case.get('runs', '—'))} | {median:.1f} | "
-              f"{spread} | {byte_text} | {change} |")
+        old_case = old.get(case["name"])
+        if old_case and old_case.get("bytes_per_op") is not None and bytes_per_op is not None \
+                and abs(old_case["bytes_per_op"] - bytes_per_op) >= 0.05:
+            byte_text = f"{bytes_per_op:.1f} (was {old_case['bytes_per_op']:.1f})"
+        change = baseline_change(case, old_case, data, previous) if old_case else "—"
+        print(f"| {cell(case['name'])} | {cell(case.get('runs', '—'))} | {interp_text} | {jit_text} | "
+              f"{byte_text} | {change} |")
 
-    interpreted = [case for case in data["cases"] if case.get("ns_per_op_interpreted")]
-    if interpreted:
-        print("\n<details><summary>Worst case with the JIT disabled (ns/op)</summary>\n")
-        print("| Scenario | JIT on | JIT off |\n| :--- | ---: | ---: |")
-        for case in interpreted:
-            print(f"| {cell(case['name'])} | {statistics.median(case['ns_per_op']):.1f} | "
-                  f"{statistics.median(case['ns_per_op_interpreted']):.1f} |")
-        print("\n</details>")
-
-    print("\nReal mod methods with simulated game APIs. `Runs` marks whether a scenario is charged "
-          "**per frame** (once each update) or **per input query** (the engine issues many queries "
-          "per frame). `bytes/op` is allocation with the collector paused, i.e. GC pressure. "
-          "These are not frame times or FPS estimates, and no pass/fail threshold is applied.")
     frame_cases = [case for case in data["cases"] if case.get("runs") == "frame"]
     if frame_cases:
         worst = max(frame_cases, key=lambda item: statistics.median(item["ns_per_op"]))
         cost = statistics.median(worst["ns_per_op"])
         print(f"\nFor scale, the heaviest per-frame scenario ({cell(worst['name'])}) is "
               f"{cost:.0f} ns/frame, about {cost / 16666667 * 100:.4f}% of a 16.7 ms (60 fps) budget.")
+
+    print("\nReal mod methods with simulated game APIs; engine calls are stubbed, so the absolute numbers "
+          "are a floor. `Runs` marks whether a scenario is charged **per frame** or **per input query** "
+          "(the engine issues many queries per frame). `bytes/op` is allocation with the collector paused, "
+          "i.e. GC pressure. `Change vs baseline` uses the interpreter column, because a tight JIT-compiled "
+          "benchmark loop can be optimised far more aggressively than real, interleaved game code. These are "
+          "not frame times or FPS estimates, and no pass/fail threshold is applied.")
+
 
 
 

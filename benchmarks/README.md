@@ -11,10 +11,13 @@ shipping code instead of to a rewrite of it.
 
 Each scenario is measured three ways:
 
-- **ns/op** — median of nine warmed samples with the JIT on (steady state).
-- **ns/op with the JIT off** — the interpreter, worst case before traces
-  compile. LuaJIT only compiles code that runs often, so a function called once
-  per frame can behave very differently from a hot benchmark loop.
+- **ns/op (interpreter)** — median of nine warmed samples with the JIT disabled.
+  This is the stable measure of the work the code does, and it is what the
+  report compares against a baseline.
+- **ns/op (JIT)** — steady state once LuaJIT has compiled a trace. Treat it as a
+  lower bound: a tight benchmark loop with stable inputs can be optimised far
+  more aggressively (sometimes hoisted clean out of the loop) than the same
+  function interleaved with real game code, so it swings between runs.
 - **bytes/op** — allocations per operation, measured with the collector paused.
   This is GC pressure, and garbage causes hitches more reliably than raw CPU.
 

@@ -108,6 +108,10 @@ local manual = fixture("none", 100, 50)
 local sequence = fixture("charged", 100, 50)
 sequence.engram:new_engram("override_primary")
 local frame = fixture("none", 100, 50)
+local REFRESH_PATHS = {
+    "content/items/weapons/player/ranged/forcestaff_p2_m1",
+    "content/items/weapons/player/ranged/lasgun_p1_m1",
+}
 
 local scenarios = {
     {
@@ -128,7 +132,11 @@ local scenarios = {
     {
         name = "Weapon identity refresh",
         runs = "frame",
-        run = function()
+        run = function(index)
+            -- Alternate weapons each iteration: with an unchanged input LuaJIT
+            -- hoists the whole call out of the loop and reports a meaningless
+            -- near-zero cost.
+            frame.equip("slot_secondary", REFRESH_PATHS[index % #REFRESH_PATHS + 1])
             frame.weapon:refresh_weapon()
             return frame.weapon.name and 1 or 0
         end,
@@ -182,10 +190,11 @@ io.write(string.format(
     '"clock":"os.clock CPU seconds","samples":%d,\n',
     revision, tostring(dirty), runtime, os_name, arch, tostring(jit_available), SAMPLES
 ))
-io.write(string.format(
-    '"reference":{"name":"mixed arithmetic and table reads","ns_per_op":[%s]},\n',
-    number_list(reference.ns_per_op)
-))
+io.write('"reference":{"name":"mixed arithmetic and table reads","ns_per_op":[' .. number_list(reference.ns_per_op) .. ']')
+if reference.ns_per_op_interpreted then
+    io.write(',"ns_per_op_interpreted":[' .. number_list(reference.ns_per_op_interpreted) .. ']')
+end
+io.write('},\n')
 io.write('"cases":[\n')
 for index, scenario in ipairs(scenarios) do
     local result = measure(scenario.run)

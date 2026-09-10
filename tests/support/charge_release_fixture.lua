@@ -122,6 +122,11 @@ local function fixture(mode, global_threshold, weapon_threshold)
         settings = mod.settings,
         inputs = inputs,
         charge = charge,
+        equip = function(slot, path)
+            local inventory = extensions.visual_loadout_system._inventory_component
+            inventory.wielded_slot = slot
+            inventory.__data[1][slot] = path
+        end,
         release_at = function(level)
             charge.charge_level = level
             return omnissiah:resolve_conflicts("action_one_pressed", false, nil, "charge", nil) == true
