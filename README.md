@@ -12,3 +12,5 @@ Tests and performance benchmarks run without a copy of the game:
 - [`benchmarks/README.md`](benchmarks/README.md) — LuaJIT CPU benchmarks and baseline comparison.
 
 Both also run automatically in GitHub Actions, with results published to the workflow summary.
+
+Releases are built by `.github/workflows/release.yml`: push a `v*` tag (or run the workflow manually) and it runs the tests, packages `mods/Skitarius/` into `Skitarius-<version>.zip` and publishes it as a GitHub Release. `tools/package.sh <version>` builds the same zip locally.
