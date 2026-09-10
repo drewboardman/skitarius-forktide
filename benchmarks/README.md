@@ -57,6 +57,20 @@ setting match; anything else is reported as a note and skipped. Even then, treat
 small changes as noise (identical code varies a few percent between runs) and
 read the median, not a single sample.
 
+## Limitations
+
+- Only the mod's own Lua code is timed. Calls into the engine (`ScriptUnit`,
+  `Managers`, the HUD element lookup) are stubbed by the fixture, so engine-side
+  cost is not included and the absolute numbers are a floor, not the whole story.
+- `bytes/op` is measured with the JIT on, which is the in-game steady state.
+  LuaJIT sinks allocations that do not escape and interns repeated substrings,
+  so allocation that a cold run would make may not appear here. That is
+  representative of a warmed game, not of the first seconds after loading.
+- Input-path scenarios are measured per query. The engine does not tell us how
+  many queries it issues per frame, so only the per-frame scenarios can be read
+  directly as a share of the frame budget.
+- `os.clock()` is CPU time; it ignores time spent anywhere else in the engine.
+
 ## In CI
 
 `.github/workflows/test.yml` runs the benchmarks on every push, publishes the
