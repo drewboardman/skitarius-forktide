@@ -26,6 +26,25 @@ local DEFAULT_WALK_SPEED = 4.0
 local DEFAULT_THRUST_CHILD = "windup_increases_power_default_child"
 local DEFAULT_THRUST_PARENT = "windup_increases_power_default_parent"
 
+-- Weapons treated as ranged when wielding the grenade/ability slot
+local PSYKER_NADES = {
+    psyker_throwing_knives = true,
+    psyker_chain_lightning = true,
+}
+
+-- refresh_weapon runs every frame, so extracting the basename of a weapon path
+-- with string.match used to be its dominant cost. Cache the result per path.
+local WEAPON_BASENAMES = {}
+local function weapon_basename(path)
+    local basename = WEAPON_BASENAMES[path]
+    if basename == nil then
+        basename = path:match("([^/]+)$") or false
+        WEAPON_BASENAMES[path] = basename
+    end
+    return basename or nil
+end
+
+
 local function _resolve_thrust_buff_name(buff_extension, preferred_name)
     local stacking_buffs = buff_extension and buff_extension._stacking_buffs
     if not stacking_buffs then
@@ -136,19 +155,18 @@ SkitariusWeaponManager.refresh_weapon = function(self)
         wielded_slot = visual_loadout and visual_loadout._inventory_component and visual_loadout._inventory_component.wielded_slot
         if wielded_slot and wielded_slot == "slot_primary" then
             weapon_name = visual_loadout._inventory_component.__data[1].slot_primary
-            weapon_name = weapon_name and weapon_name:match("([^/]+)$")
+            weapon_name = weapon_name and weapon_basename(weapon_name)
             if weapon_name then
                 self.name = weapon_name
             end
             wielded_slot = "MELEE"
         elseif wielded_slot and (wielded_slot == "slot_secondary" or wielded_slot == "slot_grenade_ability") then
-            weapon_name        = visual_loadout._inventory_component.__data[1][wielded_slot]
-            weapon_name        = weapon_name and weapon_name:match("([^/]+)$")
-            local psyker_nades = { psyker_throwing_knives = true, psyker_chain_lightning = true }
-            if weapon_name and wielded_slot == "slot_secondary" or (wielded_slot == "slot_grenade_ability" and weapon_name and psyker_nades[weapon_name]) then
+            weapon_name = visual_loadout._inventory_component.__data[1][wielded_slot]
+            weapon_name = weapon_name and weapon_basename(weapon_name)
+            if weapon_name and wielded_slot == "slot_secondary" or (wielded_slot == "slot_grenade_ability" and weapon_name and PSYKER_NADES[weapon_name]) then
                 self.name = weapon_name
             end
-            if wielded_slot == "slot_secondary" or (wielded_slot == "slot_grenade_ability" and weapon_name and psyker_nades[weapon_name]) then
+            if wielded_slot == "slot_secondary" or (wielded_slot == "slot_grenade_ability" and weapon_name and PSYKER_NADES[weapon_name]) then
                 wielded_slot = "RANGED"
             end
             -- Method 2: Inventory system as failsafe

@@ -816,11 +816,14 @@ SkitariusOmnissiah.resolve_conflicts = function(self, input, user, omnissiah, cu
     local weapon_manager = self.weapon_manager
     local bind_manager = self.bind_manager
     local weapon_name = weapon_manager:weapon_name()
+    -- Resolve the weapon type once: this function used to call it repeatedly,
+    -- and each call can fall through to is_aiming() and extension lookups.
+    local weapon_type = weapon_manager:weapon_type()
 
     if not omnissiah then
         local always_charge = self.mod.settings.always_charge
 
-        if weapon_manager:weapon_type() == "RANGED" and always_charge and weapon_manager:is_charged_ranged() then
+        if weapon_type == "RANGED" and always_charge and weapon_manager:is_charged_ranged() then
             if armoury.charged_ranged[weapon_name] then
                 if armoury.alt_weapons[weapon_name] then
                     if bind_manager:input_value("action_two_hold") and input == "action_one_hold" then
@@ -833,7 +836,7 @@ SkitariusOmnissiah.resolve_conflicts = function(self, input, user, omnissiah, cu
         end
     end
 
-    if weapon_manager:weapon_type() == "RANGED" and desired_action == "shoot" then
+    if weapon_type == "RANGED" and desired_action == "shoot" then
         local filter = engram:get_setting("ADS_FILTER")
         local aiming = weapon_manager:is_aiming()
         if filter ~= "ads_hip" then
@@ -849,7 +852,7 @@ SkitariusOmnissiah.resolve_conflicts = function(self, input, user, omnissiah, cu
         return nil
     end
 
-    if bind_manager:input_value("action_two_hold") and weapon_manager:weapon_type() == "MELEE" then
+    if bind_manager:input_value("action_two_hold") and weapon_type == "MELEE" then
         return nil
     end
 
@@ -861,11 +864,11 @@ SkitariusOmnissiah.resolve_conflicts = function(self, input, user, omnissiah, cu
         end
     end
 
-    if input == "action_two_hold" and weapon_manager:weapon_type() == "RANGED" and armoury.force_staff[weapon_name] and weapon_manager:is_charged_ranged() and not engram:current_command() then
+    if input == "action_two_hold" and weapon_type == "RANGED" and armoury.force_staff[weapon_name] and weapon_manager:is_charged_ranged() and not engram:current_command() then
         outcome = user
     end
 
-    if input == "action_two_hold" and weapon_manager:weapon_type() == "RANGED" and engram:get_setting("MODE") == "charged" and self.engram:current_command() == "idle" then
+    if input == "action_two_hold" and weapon_type == "RANGED" and engram:get_setting("MODE") == "charged" and self.engram:current_command() == "idle" then
         if (armoury.force_staff[weapon_name] and weapon_manager:current_charge() > 0) or weapon_name == "psyker_chain_lightning" then
             return true
         end

@@ -288,8 +288,9 @@ mod:hook(CLASS.InputService, "_get", function(func, self, action_name)
 
     -- Mod interception
     if mod:ready() and not Managers.ui:using_input() then
-        -- Manual swap detection
-        if type(action_name) == "string" and string.find(action_name, "wield") and out then
+        -- Manual swap detection (checked only for pressed inputs; plain find
+        -- keeps this off the pattern matcher on every input query)
+        if out and type(action_name) == "string" and string.find(action_name, "wield", 1, true) then
             MANUAL_SWAP = true
         end
         -- Input handling
